@@ -8,7 +8,8 @@ DEFAULT_LOCATION = "/Users/#{ENV['USER']}/Desktop/"
 CWD = ARGV[0] || DEFAULT_LOCATION
 
 def main
-  folders_to_check = FoldersWithMusic.new(CWD).names
+  Dir.chdir CWD
+  folders_to_check = FoldersWithMusic.new('./').names
   puts folders_to_check
 end
 

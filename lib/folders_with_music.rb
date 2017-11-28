@@ -6,22 +6,14 @@ class FoldersWithMusic
   end
 
   def names
-    old_pwd = Dir.pwd
-    Dir.chdir cwd
-    find_names
-    Dir.chdir old_pwd
-    found_names
+    Dir.entries(cwd).find_all do |dir|
+      folder_with_music?(dir)
+    end
   end
 
   private
 
-  attr_reader :cwd, :found_names
-
-  def find_names
-    @found_names = Dir.entries('./').find_all do |dir|
-      folder_with_music?(dir)
-    end
-  end
+  attr_reader :cwd
 
   def folder_with_music?(dir)
     !recursive?(dir) && folder?(dir) && has_music?(dir)
