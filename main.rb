@@ -1,3 +1,6 @@
+require 'bundler/setup' 
+Bundler.require
+
 DEFAULT_LOCATION = '/Users/poiu/Desktop/'
 CWD = ARGV[0] || DEFAULT_LOCATION
 
@@ -23,7 +26,6 @@ end
 
 def has_music?(dir)
   # Dir.glob("**/*")
-  # binding.pry
 end
 
 main
