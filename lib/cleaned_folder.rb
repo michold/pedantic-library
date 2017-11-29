@@ -6,24 +6,37 @@ class CleanedFolder
   end
 
   def update!
+    find_tags
     # assumes 1 folder = 1 album
     # TODO: handle multiple albums, not sure how though :<
-    find_tags
-
     return unless artist && album
 
-    puts '.....'
-    puts artist
-    puts '.....'
-    puts album
-    # puts files
-    puts folders
-    puts '.....'
+    return unless approved_by_prompt
+
+    fix_directories
   end
 
   private
 
   attr_reader :folder_name, :artist, :album
+
+  def approved_by_prompt
+    puts "This script will move files from `#{folder_name}` to `#{proper_directory}`"
+    puts "Do you want to continue? (y/n)"
+    gets.chomp == "y"
+  end
+
+  def proper_directory
+    File.join(artist, album)
+  end
+
+  def fix_directories
+    puts "mv rm mv rm"
+    # move_files_to_temp
+    # remove_old_folder
+    # move_files_to_proper_folder
+    # remove_temp_folder
+  end
 
   def find_tags
     tags = FileTags.new(folder_name)
