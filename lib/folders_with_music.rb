@@ -20,7 +20,7 @@ class FoldersWithMusic
   end
 
   def recursive?(dir)
-    dir == '.' || dir == '..'
+    dir == '.' || dir == '..' || File.symlink?(dir) # we ignore symlinks for now
   end
 
   def folder?(dir)
@@ -29,7 +29,7 @@ class FoldersWithMusic
 
   def has_music?(dir)
     files = Dir.glob("#{bash_escape(dir)}/**/*")
-    files.any? { |file_name| music_file?(file_name)  }
+    files.any? { |file_name| music_file?(file_name) }
   end
 
   def music_file?(file_name)
