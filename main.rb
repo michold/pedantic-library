@@ -10,7 +10,9 @@ CWD = ARGV[0] || DEFAULT_LOCATION
 def main
   Dir.chdir CWD
   folders_to_check = FoldersWithMusic.new('./').names
-  puts folders_to_check
+  folders_to_check.each do |folder_name|
+    CleanedFolder.new(folder_name).update!
+  end
 end
 
 main
