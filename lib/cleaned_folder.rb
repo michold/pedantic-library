@@ -1,4 +1,6 @@
 class CleanedFolder
+  TEMP_DIRECTORY = "tmp_#{Time.now.to_i}"
+
   def initialize(folder_name)
     @folder_name = folder_name
     @artists = []
@@ -8,12 +10,8 @@ class CleanedFolder
   def update!
     puts "." * 50
     find_tags
-    # assumes 1 folder = 1 album by 1 artist
-    # TODO: handle multiple albums/artists, not sure how though :<
-    return abort("multiple albums in folder") unless album
-    return abort("multiple artists in folder") unless artist
 
-    return abort unless approved_by_prompt
+    return unless validate!
 
     fix_directories
   end
@@ -21,6 +19,18 @@ class CleanedFolder
   private
 
   attr_reader :folder_name, :artist, :album
+
+  def validate!
+    # assumes 1 folder = 1 album by 1 artist
+    # TODO: handle multiple albums/artists, not sure how though :<
+    return abort("multiple albums in folder") unless album
+    return abort("multiple artists in folder") unless artist
+    # TODO: auto-remove blacklisted files [like .dat] before this check
+    return abort("there are files before mp3 directory") unless src_path
+    return abort("files are sorted properly") if src_path == proper_directory
+    return abort unless approved_by_prompt
+    true
+  end
 
   def abort(reason = nil)
     message = "aborting update of folder `#{folder_name}`"
@@ -39,24 +49,16 @@ class CleanedFolder
   end
 
   def fix_directories
-    puts "mv rm"
-    # get directory of mp3s [and scans and all] 
+    # TODO: respect other folders that were previously added there
+    FileUtils.mv(folder_name, artist)
+    FileUtils.mv(src_path.sub(folder_name, artist), proper_directory)
+    remove_old_folders
+  end
 
-    # def common_prefix(paths)
-    #   return '' if paths.empty?
-    #   return paths.first.split('/').slice(0...-1).join('/') if paths.length <= 1
-    #   arr = paths.sort
-    #   first = arr.first.split('/')
-    #   last = arr.last.split('/')
-    #   i = 0
-    #   i += 1 while first[i] == last[i] && i <= first.length
-    #   first.slice(0, i).join('/')
-    # end
-
-    # -> check if all mp3s are in 'common_prefix'
-
-    # move_files_to_proper_folder
-    # remove_old_folders
+  def remove_old_folders
+    Dir.glob(File.join(artist, '*'))
+     .select { |file| file != proper_directory && File.directory?(file) }
+     .each { |file| Dir.delete(file) }  
   end
 
   def find_tags
@@ -67,10 +69,29 @@ class CleanedFolder
   end
 
   def files
-    @_files ||= Dir.glob("#{bash_escape(folder_name)}/**/*")
+    @_files ||= Dir.glob("#{bash_escape(folder_name)}/**/*").select { |file| File.file? file }
+  end
+
+  def mp3_files
+    files.find_all do |file|
+      file.end_with? '.mp3'
+    end
   end
 
   def bash_escape(string)
     string.gsub(/[\\\{\}\[\]\*\?]/) { |symbol| "\\#{symbol}" }
+  end
+
+  def common_folder(paths)
+    /\A(.*)\/.*(\n\1.*)*\Z/.match(paths.join("\n"))[1] # regex magic
+  end
+
+  def src_path
+    @_src_path ||= find_src_path
+  end
+
+  def find_src_path
+    path = common_folder(files)
+    path == common_folder(mp3_files) ? path : nil
   end
 end
