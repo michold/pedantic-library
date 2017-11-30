@@ -1,4 +1,6 @@
 class CleanedFolder
+  TEMP_DIR = "temp_#{Time.now.to_i}"
+
   def initialize(folder_name)
     @folder_name = folder_name
     @artists = []
@@ -23,8 +25,8 @@ class CleanedFolder
     # TODO: handle multiple albums/artists, not sure how though :<
     return abort("multiple albums in folder") unless album
     return abort("multiple artists in folder") unless artist
+    return abort("artist folder already exists") if File.directory?(artist) && artist != folder_name
     # TODO: auto-remove blacklisted files [like .dat] before this check
-    return abort("artist folder already exists") if File.directory? artist
     return abort("there are files before mp3 directory") unless src_path
     return abort("files are sorted properly") if src_path == proper_directory
     return abort unless approved_by_prompt
@@ -48,15 +50,10 @@ class CleanedFolder
   end
 
   def fix_directories
-    FileUtils.mv(folder_name, artist)
-    FileUtils.mv(src_path.sub(folder_name, artist), proper_directory)
-    remove_old_folders
-  end
-
-  def remove_old_folders
-    Dir.glob(File.join(artist, '*'))
-     .select { |file| file != proper_directory && File.directory?(file) }
-     .each { |file| Dir.delete(file) }  
+    FileUtils.cp_r(src_path, TEMP_DIR) # copy music to temp
+    FileUtils.rm_rf(File.join(folder_name, "."), secure: true) # remove content of old folder
+    FileUtils.mv(folder_name, artist) if folder_name != artist  # rename old folder
+    FileUtils.mv(TEMP_DIR, proper_directory) # move temp as new folder's album
   end
 
   def find_tags
