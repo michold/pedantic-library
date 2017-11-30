@@ -1,6 +1,4 @@
 class CleanedFolder
-  TEMP_DIRECTORY = "tmp_#{Time.now.to_i}"
-
   def initialize(folder_name)
     @folder_name = folder_name
     @artists = []
@@ -26,6 +24,7 @@ class CleanedFolder
     return abort("multiple albums in folder") unless album
     return abort("multiple artists in folder") unless artist
     # TODO: auto-remove blacklisted files [like .dat] before this check
+    return abort("artist folder already exists") if File.directory? artist
     return abort("there are files before mp3 directory") unless src_path
     return abort("files are sorted properly") if src_path == proper_directory
     return abort unless approved_by_prompt
@@ -49,7 +48,6 @@ class CleanedFolder
   end
 
   def fix_directories
-    # TODO: respect other folders that were previously added there
     FileUtils.mv(folder_name, artist)
     FileUtils.mv(src_path.sub(folder_name, artist), proper_directory)
     remove_old_folders
