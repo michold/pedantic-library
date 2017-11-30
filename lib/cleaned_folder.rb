@@ -32,10 +32,9 @@ class CleanedFolder
 
   def fix_directories
     puts "mv rm mv rm"
-    # move_files_to_temp
-    # remove_old_folder
+    # get directory of mp3s [and scans and all]
     # move_files_to_proper_folder
-    # remove_temp_folder
+    # remove_old_folder
   end
 
   def find_tags
