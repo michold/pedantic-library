@@ -25,10 +25,10 @@ class CleanedFolder
     # TODO: handle multiple albums/artists, not sure how though :<
     return abort("multiple albums in folder") unless album
     return abort("multiple artists in folder") unless artist
-    return abort("artist folder already exists") if File.directory?(artist) && artist != folder_name
+    return abort("artist folder already exists") if File.directory?(artist) && !artist.casecmp(folder_name)
     # TODO: auto-remove blacklisted files [like .dat] before this check
     return abort("there are files before mp3 directory") unless src_path
-    return abort("files are sorted properly") if src_path == proper_directory
+    return abort("files are sorted properly") if src_path.casecmp(proper_directory)
     return abort unless approved_by_prompt
     true
   end
