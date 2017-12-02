@@ -1,5 +1,11 @@
+# frozen_string_literal: true
+
 class CleanedFolder
   TEMP_DIR = "temp_#{Time.now.to_i}"
+  TO_REMOVE = [
+    '.DS_STORE',
+    '*.dat'
+  ].freeze
 
   def initialize(folder_name)
     @folder_name = folder_name
@@ -27,6 +33,7 @@ class CleanedFolder
     return abort("multiple artists in folder".red) unless artist
     return abort("artist folder already exists".red) if File.directory?(artist) && !same_path(artist, folder_name)
     # TODO: auto-remove blacklisted files [like .dat] before this check
+    clean_directory
     return abort("there are files before mp3 directory".red) unless src_path
     return abort("files are sorted properly".green) if same_path(src_path, proper_directory)
     return abort unless approved_by_prompt
@@ -88,5 +95,21 @@ class CleanedFolder
   def find_src_path
     path = common_folder(files)
     path == common_folder(mp3_files) ? path : nil
+  end
+
+  def clean_directory
+    TO_REMOVE.each do |pattern|
+      remove_files(pattern)
+    end
+  end
+
+  def remove_files(pattern)
+    Dir.glob(File.join(folder_name, '**', pattern)).each do |file| 
+      File.delete(file)
+    end
+  end
+
+  def same_path(path1, path2)
+    path1.downcase == path2.downcase
   end
 end
