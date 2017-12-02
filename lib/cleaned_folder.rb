@@ -61,8 +61,7 @@ class CleanedFolder
   def fix_directories
     FileUtils.cp_r(src_path, TEMP_DIR) # copy music to temp
     FileUtils.rm_rf(File.join(folder_name, "."), secure: true) # remove content of old folder
-    FileUtils.mv(folder_name, artist) unless same_path(folder_name, artist)  # rename old folder eg GUMI_12 -> GUMI
-    File.rename(folder_name, artist) if same_path(folder_name, artist) && folder_name != artist  # rename old folder eg GuMi -> GUMI 
+    File.rename(folder_name, artist) if folder_name != artist  # rename old folder
     FileUtils.mv(TEMP_DIR, proper_directory) # move temp as new folder's album
   end
 
