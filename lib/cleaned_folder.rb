@@ -23,12 +23,12 @@ class CleanedFolder
   def validate!
     # assumes 1 folder = 1 album by 1 artist
     # TODO: handle multiple albums/artists, not sure how though :<
-    return abort("multiple albums in folder") unless album
-    return abort("multiple artists in folder") unless artist
-    return abort("artist folder already exists") if File.directory?(artist) && !artist.casecmp(folder_name)
+    return abort("multiple albums in folder".red) unless album
+    return abort("multiple artists in folder".red) unless artist
+    return abort("artist folder already exists".red) if File.directory?(artist) && !same_path(artist, folder_name)
     # TODO: auto-remove blacklisted files [like .dat] before this check
-    return abort("there are files before mp3 directory") unless src_path
-    return abort("files are sorted properly") if src_path.casecmp(proper_directory)
+    return abort("there are files before mp3 directory".red) unless src_path
+    return abort("files are sorted properly".green) if same_path(src_path, proper_directory)
     return abort unless approved_by_prompt
     true
   end
