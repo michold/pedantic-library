@@ -30,9 +30,9 @@ class CleanedFolder
     return abort("multiple albums in folder".red) unless album
     return abort("multiple artists in folder".red) unless artist
     return abort("artist folder already exists".red) if File.directory?(artist) && !same_path(artist, folder_name)
-    # TODO: auto-remove blacklisted files [like .dat] before this check
 
 
+    # TODO: sanity check of size
     # Dir.glob(File.join(dir, '**', '*'))
     #   .map{ |f| File.size(f) }
     #   .inject(:+)
