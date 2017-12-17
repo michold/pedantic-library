@@ -63,7 +63,7 @@ class CleanedFolder
   def handle_old_folder
     return if folder_name == artist
     if File.directory?(artist)
-      FileUtils.rm_f(folder_name) # delete old folder if artist folder already exists
+      FileUtils.rm_rf(folder_name) # delete old folder if artist folder already exists
     else
       File.rename(folder_name, artist) # rename old folder if artist folder doesn't exist yet
     end
