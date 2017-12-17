@@ -1,5 +1,5 @@
 class FoldersWithMusic
-  MUSIC_EXTENSIONS = ['mp3', 'flac'] 
+  MUSIC_EXTENSIONS = ['mp3'] # TODO: handle flacs, aac 
 
   def initialize(cwd)
     @cwd = cwd
@@ -20,7 +20,7 @@ class FoldersWithMusic
   end
 
   def recursive?(dir)
-    dir == '.' || dir == '..' || File.symlink?(dir) # we ignore symlinks for now
+    dir == '.' || dir == '..' || File.symlink?(dir) # TODO: rethink symlinks handling
   end
 
   def folder?(dir)
