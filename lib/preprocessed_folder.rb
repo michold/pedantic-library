@@ -3,7 +3,8 @@
 class PreprocessedFolder
   TO_REMOVE = [
     '.DS_STORE',
-    '*.dat'
+    '*.dat',
+    'Thumbs.db'
   ].freeze
 
   def initialize(folder_name)
