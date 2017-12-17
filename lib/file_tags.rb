@@ -15,7 +15,7 @@ class FileTags
   attr_reader :folder_name
 
   def scan_files_tags
-    mpusic_files.each do |file_path|
+    music_files.each do |file_path|
       ID3Tag.read(File.open(file_path)) do |tag|
         artists << find_artist(tag)
         albums << find_album(tag)
@@ -45,7 +45,7 @@ class FileTags
     results.length == 1 ? results[0] : (raise D3Tag::Tag::MultipleFrameError)
   end
 
-  def mpusic_files
+  def music_files
     FileList.new(folder_name).music_files
   end
 end
