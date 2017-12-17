@@ -27,15 +27,10 @@ class CleanedFolder
   def validate!
     # assumes 1 folder = 1 album by 1 artist
     # TODO: handle multiple albums/artists, not sure how though :<
+    # TODO: TESTS :| 
     return abort("multiple albums in folder".red) unless album
     return abort("multiple artists in folder".red) unless artist
-    return abort("artist folder already exists".red) if File.directory?(artist) && !same_path(artist, folder_name)
 
-
-    # TODO: sanity check of size
-    # Dir.glob(File.join(dir, '**', '*'))
-    #   .map{ |f| File.size(f) }
-    #   .inject(:+)
     return abort("there are files before mp3 directory".red) unless src_path
     return abort("files are sorted properly".green) if same_path(src_path, proper_directory)
     return abort unless approved_by_prompt
@@ -61,8 +56,17 @@ class CleanedFolder
   def fix_directories
     FileUtils.cp_r(src_path, TEMP_DIR) # copy music to temp
     FileUtils.rm_rf(File.join(folder_name, "."), secure: true) # remove content of old folder
-    File.rename(folder_name, artist) if folder_name != artist  # rename old folder
+    handle_old_folder
     FileUtils.mv(TEMP_DIR, proper_directory) # move temp as new folder's album
+  end
+
+  def handle_old_folder
+    return if folder_name == artist
+    if File.directory?(artist)
+      FileUtils.rm_f(folder_name) # delete old folder if artist folder already exists
+    else
+      File.rename(folder_name, artist) # rename old folder if artist folder doesn't exist yet
+    end
   end
 
   def find_tags

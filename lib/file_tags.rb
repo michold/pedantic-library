@@ -1,6 +1,8 @@
 class FileTags
   def initialize(folder_name)
     @folder_name = folder_name
+    # TODO: get album artist with fallback to normal artist
+    # TODO: sometimes artist and album tags are mixed up
     @artists = []
     @albums = []
     scan_files_tags
