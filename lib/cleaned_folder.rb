@@ -32,7 +32,7 @@ class CleanedFolder
     return abort("multiple artists in folder".red) unless artist
 
     return abort("there are files before mp3 directory".red) unless src_path
-    return abort("files are sorted properly".green) if same_path(src_path, proper_directory)
+    return abort("files are sorted properly".green) if same_path?(src_path, proper_directory)
     return abort unless approved_by_prompt
     true
   end
@@ -99,7 +99,7 @@ class CleanedFolder
     path == common_folder(mp3_files) ? path : nil
   end
 
-  def same_path(path1, path2)
+  def same_path?(path1, path2)
     path1.downcase == path2.downcase
   end
 end
