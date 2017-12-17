@@ -28,17 +28,16 @@ class FoldersWithMusic
   end
 
   def has_music?(dir)
-    files = Dir.glob("#{bash_escape(dir)}/**/*")
-    files.any? { |file_name| music_file?(file_name) }
+    files(dir).any? { |file_name| music_file?(file_name) }
+  end
+
+  def files(dir)
+    FileList.files(dir)
   end
 
   def music_file?(file_name)
     MUSIC_EXTENSIONS.any? do |ext|
       file_name.end_with? ".#{ext}"
     end
-  end
-
-  def bash_escape(string)
-    string.gsub(/[\\\{\}\[\]\*\?]/) { |symbol| "\\#{symbol}" }
   end
 end

@@ -77,17 +77,13 @@ class CleanedFolder
   end
 
   def files
-    @_files ||= Dir.glob("#{bash_escape(folder_name)}/**/*").select { |file| File.file? file }
+    @_files ||= FileList.files(folder_name)
   end
 
   def mp3_files
     files.find_all do |file|
       file.end_with? '.mp3'
     end
-  end
-
-  def bash_escape(string)
-    string.gsub(/[\\\{\}\[\]\*\?]/) { |symbol| "\\#{symbol}" }
   end
 
   def common_folder(paths)
