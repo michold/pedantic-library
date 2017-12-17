@@ -1,6 +1,4 @@
 class FoldersWithMusic
-  MUSIC_EXTENSIONS = ['mp3'] # TODO: handle flacs, aac 
-
   def initialize(cwd)
     @cwd = cwd
   end
@@ -28,16 +26,6 @@ class FoldersWithMusic
   end
 
   def has_music?(dir)
-    files(dir).any? { |file_name| music_file?(file_name) }
-  end
-
-  def files(dir)
-    FileList.files(dir)
-  end
-
-  def music_file?(file_name)
-    MUSIC_EXTENSIONS.any? do |ext|
-      file_name.end_with? ".#{ext}"
-    end
+    FileList.new(dir).music_files.any?
   end
 end

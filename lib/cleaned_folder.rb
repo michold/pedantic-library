@@ -76,14 +76,16 @@ class CleanedFolder
     @album = tags.albums.uniq.length == 1 && tags.albums[0]
   end
 
+  def file_list
+    @_file_list ||= FileList.new(folder_name)
+  end
+
   def files
-    @_files ||= FileList.files(folder_name)
+    @_files ||= file_list.all_files
   end
 
   def mp3_files
-    files.find_all do |file|
-      file.end_with? '.mp3'
-    end
+    @_mp3_files ||= file_list.music_files
   end
 
   def common_folder(paths)

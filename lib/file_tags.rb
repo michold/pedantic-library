@@ -15,7 +15,7 @@ class FileTags
   attr_reader :folder_name
 
   def scan_files_tags
-    mp3_files.each do |file_path|
+    mpusic_files.each do |file_path|
       ID3Tag.read(File.open(file_path)) do |tag|
         artists << find_artist(tag)
         albums << find_album(tag)
@@ -45,17 +45,7 @@ class FileTags
     results.length == 1 ? results[0] : (raise D3Tag::Tag::MultipleFrameError)
   end
 
-  def files
-    @_files ||= Dir.glob("#{bash_escape(folder_name)}/**/*")
-  end
-
-  def bash_escape(string)
-    string.gsub(/[\\\{\}\[\]\*\?]/) { |symbol| "\\#{symbol}" }
-  end
-
-  def mp3_files
-    files.find_all do |file|
-      file.end_with? '.mp3'
-    end
+  def mpusic_files
+    FileList.new(folder_name).music_files
   end
 end
