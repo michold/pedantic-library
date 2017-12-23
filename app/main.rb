@@ -2,9 +2,10 @@
 
 require 'bundler/setup'
 Bundler.require
-Dir["#{File.dirname(__FILE__)}/lib/*.rb"].each {|file| require file } # require /lib/*
 
-DEFAULT_LOCATION = "/Users/#{ENV['USER']}/Desktop/"
+Dir["./#{File.dirname(__FILE__)}/lib/*.rb"].each {|file| require file } # require lib/*
+
+DEFAULT_LOCATION = "/Users/#{ENV['USER']}/Desktop"
 CWD = ARGV[0] || DEFAULT_LOCATION
 
 def main
