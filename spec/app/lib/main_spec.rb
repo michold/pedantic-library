@@ -4,7 +4,7 @@ RSpec.describe Main do
   describe 'searched path' do
     before do
       FoldersWithMusic.any_instance.stubs(names: [])
-      CleanedFolder.any_instance.stubs(:update!)
+      FixedFolder.any_instance.stubs(:update!)
     end
 
     context 'with given path' do

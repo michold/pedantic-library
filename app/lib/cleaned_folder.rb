@@ -1,109 +1,49 @@
 # frozen_string_literal: true
 
 class CleanedFolder
-  TEMP_DIR = "temp_#{Time.now.to_i}"
+  TO_REMOVE = [
+    '.DS_STORE',
+    '*.dat',
+    'Thumbs.db'
+  ].freeze
 
   def initialize(folder_name)
     @folder_name = folder_name
-    @artists = []
-    @albums = []
   end
 
   def update!
-    puts "." * 50
-    find_tags
-
-    PreprocessedFolder.new(folder_name).update!
-
-    return unless validate!
-
-    fix_directories
+    return if files_to_remove.empty?
+    return abort unless approved_by_prompt
+    files_to_remove.each { |file| File.delete(file) }
   end
 
   private
 
-  attr_reader :folder_name, :artist, :album
-
-  def validate!
-    # assumes 1 folder = 1 album by 1 artist
-    # TODO: handle multiple albums/artists, not sure how though :<
-    # TODO: TESTS :|
-    # TODO: check coverage
-    # TODO: CI
-    return abort("multiple albums in folder".red) unless album
-    return abort("multiple artists in folder".red) unless artist
-
-    return abort("there are files before mp3 directory".red) unless src_path
-    return abort("files are sorted properly".green) if same_path?(src_path, proper_directory)
-    return abort unless approved_by_prompt
-    true
-  end
-
-  def abort(reason = nil)
-    message = "aborting update of folder `#{folder_name}`"
-    message += " due to #{reason}" if reason
-    puts message
-  end
+  attr_reader :folder_name
 
   def approved_by_prompt
-    puts "This script will move files from `#{folder_name}` to `#{proper_directory}`"
+    puts "This script will remove the following files:"
+    puts files_to_remove
+    puts "From #{folder_name} directory."
     puts "Do you want to continue? (y/n)"
     gets.chomp == "y"
   end
 
-  def proper_directory
-    File.join(artist, album)
+  def abort
+    puts "aborting delete of files in folder `#{folder_name}`"
   end
 
-  def fix_directories
-    FileUtils.cp_r(src_path, TEMP_DIR) # copy music to temp
-    FileUtils.rm_rf(File.join(folder_name, "."), secure: true) # remove content of old folder
-    handle_old_folder
-    FileUtils.mv(TEMP_DIR, proper_directory) # move temp as new folder's album
+  def files_to_remove
+    @_files_to_remove ||= find_files_to_remove
   end
 
-  def handle_old_folder
-    return if folder_name == artist
-    if File.directory?(artist)
-      FileUtils.rm_rf(folder_name) # delete old folder if artist folder already exists
-    else
-      File.rename(folder_name, artist) # rename old folder if artist folder doesn't exist yet
-    end
+  def find_files_to_remove
+    TO_REMOVE.map do |pattern|
+      files_with_pattern(pattern)
+    end.flatten
   end
 
-  def find_tags
-    tags = FileTags.new(folder_name)
-
-    @artist = tags.artists.uniq.length == 1 && tags.artists[0]
-    @album = tags.albums.uniq.length == 1 && tags.albums[0]
-  end
-
-  def file_list
-    @_file_list ||= FileList.new(folder_name)
-  end
-
-  def files
-    @_files ||= file_list.all_files
-  end
-
-  def mp3_files
-    @_mp3_files ||= file_list.music_files
-  end
-
-  def common_folder(paths)
-    /\A(.*)\/.*(\n\1.*)*\Z/.match(paths.join("\n"))[1] # regex magic
-  end
-
-  def src_path
-    @_src_path ||= find_src_path
-  end
-
-  def find_src_path
-    path = common_folder(files)
-    path == common_folder(mp3_files) ? path : nil
-  end
-
-  def same_path?(path1, path2)
-    path1.downcase == path2.downcase
+  def files_with_pattern(pattern)
+    Dir.glob(File.join(folder_name, '**', pattern))
   end
 end
