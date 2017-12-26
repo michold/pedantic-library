@@ -7,3 +7,4 @@ gem "colorize"
 gem "id3tag"
 
 gem "rspec"
+gem "mocha"
