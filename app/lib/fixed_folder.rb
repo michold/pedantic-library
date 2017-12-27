@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CleanedFolder
+class FixedFolder
   TEMP_DIR = "temp_#{Time.now.to_i}"
 
   def initialize(folder_name)
@@ -13,7 +13,7 @@ class CleanedFolder
     puts "." * 50
     find_tags
 
-    PreprocessedFolder.new(folder_name).update!
+    CleanedFolder.new(folder_name).update!
 
     return unless validate!
 
@@ -27,7 +27,7 @@ class CleanedFolder
   def validate!
     # assumes 1 folder = 1 album by 1 artist
     # TODO: handle multiple albums/artists, not sure how though :<
-    # TODO: TESTS :| 
+    # TODO: TESTS :|
     # TODO: check coverage
     # TODO: CI
     return abort("multiple albums in folder".red) unless album

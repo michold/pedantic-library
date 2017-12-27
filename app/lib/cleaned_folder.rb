@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PreprocessedFolder
+class CleanedFolder
   TO_REMOVE = [
     '.DS_STORE',
     '*.dat',
