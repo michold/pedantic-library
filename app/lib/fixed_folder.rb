@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CleanedFolder
+class FixedFolder
   TEMP_DIR = "temp_#{Time.now.to_i}"
 
   def initialize(folder_name)
@@ -13,7 +13,8 @@ class CleanedFolder
     puts "." * 50
     find_tags
 
-    PreprocessedFolder.new(folder_name).update!
+    CleanedFolder.new(folder_name).update!
+    CleanedFeatures.new(folder_name, tags).update! if artist && tags.artist_has_features
 
     return unless validate!
 
@@ -22,12 +23,12 @@ class CleanedFolder
 
   private
 
-  attr_reader :folder_name, :artist, :album
+  attr_reader :folder_name, :artist, :album, :tags
 
   def validate!
     # assumes 1 folder = 1 album by 1 artist
     # TODO: handle multiple albums/artists, not sure how though :<
-    # TODO: TESTS :| 
+    # TODO: TESTS :|
     # TODO: check coverage
     # TODO: CI
     return abort("multiple albums in folder".red) unless album
@@ -35,7 +36,7 @@ class CleanedFolder
 
     return abort("there are files before mp3 directory".red) unless src_path
     return abort("files are sorted properly".green) if same_path?(src_path, proper_directory)
-    return abort unless approved_by_prompt
+    return abort unless approved_by_prompt("move files from `#{folder_name}` to `#{proper_directory}`")
     true
   end
 
@@ -45,8 +46,9 @@ class CleanedFolder
     puts message
   end
 
-  def approved_by_prompt
-    puts "This script will move files from `#{folder_name}` to `#{proper_directory}`"
+  def approved_by_prompt(message)
+    # TODO: make it a separate class
+    puts "This script will #{message}"
     puts "Do you want to continue? (y/n)"
     gets.chomp == "y"
   end
@@ -72,7 +74,7 @@ class CleanedFolder
   end
 
   def find_tags
-    tags = FileTags.new(folder_name)
+    @tags = FileTags.new(folder_name)
 
     @artist = tags.artists.uniq.length == 1 && tags.artists[0]
     @album = tags.albums.uniq.length == 1 && tags.albums[0]
