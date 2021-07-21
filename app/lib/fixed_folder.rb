@@ -11,7 +11,6 @@ class FixedFolder
 
   def update!
     puts "." * 50
-    puts folder_name
     find_tags
 
     CleanedFolder.new(folder_name).update!
