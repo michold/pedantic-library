@@ -6,7 +6,6 @@ RSpec.describe CleanedFolder do
   around do |example|
     FakeFS do
       example.run
-      # binding.pry
     end
   end
 
