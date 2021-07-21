@@ -25,6 +25,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.0)
+    taglib-ruby (1.1.0)
 
 PLATFORMS
   ruby
@@ -35,6 +36,7 @@ DEPENDENCIES
   mocha
   pry
   rspec
+  taglib-ruby
 
 BUNDLED WITH
-   1.14.6
+   1.17.3

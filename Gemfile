@@ -5,6 +5,7 @@ gem "pry"
 gem "colorize"
 
 gem "id3tag"
+gem "taglib-ruby"
 
 gem "rspec"
 gem "mocha"
