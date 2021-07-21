@@ -10,4 +10,3 @@ gem "taglib-ruby"
 
 gem "rspec"
 gem "mocha"
-gem "fakefs", require: false

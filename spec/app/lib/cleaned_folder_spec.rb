@@ -4,8 +4,11 @@ require 'spec_helper'
 
 RSpec.describe CleanedFolder do
   around do |example|
-    FakeFS do
-      example.run
+    Dir.mktmpdir do |temp_dir|
+      Dir.chdir temp_dir do
+        @temp_dir = temp_dir
+        example.run
+      end
     end
   end
 
