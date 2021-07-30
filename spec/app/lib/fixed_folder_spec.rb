@@ -87,6 +87,29 @@ RSpec.describe FixedFolder do
             end
           end
         end
+
+        context "with feats, some already added" do
+          let(:fixture_path) { 'with_feats_already_added' }
+
+          before do
+            CleanedFeatures.any_instance.stubs(gets: "y\n")
+          end
+
+          it 'fixes the filesystem' do
+            described_class.new("Mroqły").update!
+
+            expect(File.file?(final_dir)).to be true
+          end
+
+          it 'fixes the tags' do
+            described_class.new("Mroqły").update!
+
+            ID3Tag.read(File.open(final_dir)) do |tag|
+              expect(tag.artist).to eq("Mroqły")
+              expect(tag.title).to eq("Jesteś Cooler (feat. Dora & Zmora)")
+            end
+          end
+        end
       end
 
       context 'changes rejected' do

@@ -23,7 +23,7 @@ class CleanedFeatures
   def add_features_to_title(org_artist, artists, title, file_path)
     ID3Tag.read(File.open(file_path)) do |tag|
       artist = artists.delete_at(0)
-      new_title = "#{title} (feat. #{features_string(artists)})"
+      new_title = get_new_title(title, artists)
       return unless approved_by_prompt("change `#{title}` by `#{org_artist}` to `#{new_title}` by `#{artist}`")
 
       update_file(file_path, artist, new_title)
@@ -37,6 +37,13 @@ class CleanedFeatures
       tag.title = title
       mp3_file.save
     end
+  end
+
+  def get_new_title(title, artists)
+    title_matches = title.match(/(.*)\s\(feat\.\s(.*)\)/)
+    title_features = title_matches ? title_matches[2].split(/\s\&\s|,\s/) : []
+    new_base_title = title_matches ? title_matches[1] : title
+    "#{new_base_title} (feat. #{features_string(title_features | artists)})"
   end
 
   def features_string(features)
