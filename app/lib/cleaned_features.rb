@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class CleanedFeatures
+  FEATURES_SEPARATOR = /;\s|,\s|\s\&\s/
+
   def initialize(folder_name, tags)
     @folder_name = folder_name
     @tags = tags
@@ -9,7 +11,7 @@ class CleanedFeatures
   def update!
     tags.files.each do |file|
       artist = file.fetch(:artist)
-      artists = artist.split(/;\s|\s\&\s/)
+      artists = artist.split(FEATURES_SEPARATOR)
       next if artists.length == 1
 
       add_features_to_title(file.fetch(:artist), artists, file.fetch(:title), file.fetch(:file_path))

@@ -28,7 +28,6 @@ class FixedFolder
   def validate!
     # assumes 1 folder = 1 album by 1 artist
     # TODO: handle multiple albums/artists, not sure how though :<
-    # TODO: TESTS :|
     # TODO: check coverage
     # TODO: CI
     return abort("multiple albums in folder".red) unless album
