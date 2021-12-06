@@ -33,6 +33,7 @@ RSpec.describe FixedFolder do
       context 'changes accepted' do
         before do
           described_class.any_instance.stubs(gets: "y\n")
+          MoveFolders.any_instance.stubs(gets: "y\n")
         end
 
         context "loose folder" do
@@ -66,6 +67,16 @@ RSpec.describe FixedFolder do
 
           it 'fixes the filesystem' do
             described_class.new("xxx").update!
+
+            expect(File.file?(final_dir)).to be true
+          end
+        end
+
+        context "wrong ascii" do
+          let(:fixture_path) { 'wrong_ascii' }
+
+          it 'fixes the filesystem' do
+            described_class.new("Mroqly").update!
 
             expect(File.file?(final_dir)).to be true
           end

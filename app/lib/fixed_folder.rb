@@ -29,10 +29,7 @@ class FixedFolder
     # TODO: CI
     return abort("multiple albums in folder".red) unless album
     return abort("multiple artists in folder".red) unless artist
-
     return abort("there are files before mp3 directory".red) unless src_directory
-    return abort("files are sorted properly".green) if same_path?(src_directory, destination_directory)
-    return abort unless approved_by_prompt("move files from `#{folder_name}` to `#{destination_directory}`")
     true
   end
 
@@ -63,13 +60,5 @@ class FixedFolder
 
   def src_directory
     move_folders.src_directory
-  end
-
-  def destination_directory
-    move_folders.destination_directory
-  end
-
-  def same_path?(path1, path2)
-    path1.downcase == path2.downcase
   end
 end
