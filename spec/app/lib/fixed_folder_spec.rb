@@ -43,6 +43,12 @@ RSpec.describe FixedFolder do
 
             expect(File.file?(final_dir)).to be true
           end
+
+          it "doesn't leave any leftover folders" do
+            described_class.new("Mroqły").update!
+
+            expect(Dir.glob(File.join(@temp_dir, '*'))).to eq [File.join(@temp_dir, 'Mroqly')]
+          end
         end
 
         context "wrong album" do

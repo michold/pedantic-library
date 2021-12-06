@@ -13,10 +13,8 @@ class MoveFolders
     FileUtils.cp_r(src_directory, TEMP_DIR) # copy music to temp
     FileUtils.rm_rf(File.join(folder_name, "."), secure: true) # remove content of old folder
     prepare_new_folder
-    files.each do |file_path|
-      file_name = File.basename(file_path)
-      FileUtils.mv(File.join(TEMP_DIR, file_name), File.join(destination_directory, file_name.to_ascii)) # move temp as new folder's album
-    end
+    move_files_to_new_folder
+    FileUtils.rm_rf(TEMP_DIR, secure: true)
   end
 
   def destination_directory
@@ -41,6 +39,13 @@ class MoveFolders
     Dir.mkdir(destination_directory)
   end
 
+  def move_files_to_new_folder
+    files.each do |file_path|
+      file_name = File.basename(file_path)
+      FileUtils.mv(File.join(TEMP_DIR, file_name), File.join(destination_directory, file_name.to_ascii)) # move temp as new folder's album
+    end
+  end
+
   def album_folder_name
     @_album_folder_name ||= album.to_ascii
   end
@@ -57,13 +62,9 @@ class MoveFolders
     @_files ||= file_list.all_files
   end
 
-  def mp3_files
-    @_mp3_files ||= file_list.music_files
-  end
-
   def find_src_path
     path = common_folder(files)
-    path == common_folder(mp3_files) ? path : nil
+    path == common_folder(file_list.music_files) ? path : nil
   end
 
   def common_folder(paths)
