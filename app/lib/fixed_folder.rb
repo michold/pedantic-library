@@ -3,8 +3,6 @@
 class FixedFolder
   def initialize(folder_name)
     @folder_name = folder_name
-    @artists = []
-    @albums = []
   end
 
   def update!
