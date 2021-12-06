@@ -29,6 +29,7 @@ class FixedFolder
     # assumes 1 folder = 1 album by 1 artist
     # TODO: handle multiple albums/artists, not sure how though :<
     # TODO: check coverage
+    # TODO: rubocop
     # TODO: CI
     return abort("multiple albums in folder".red) unless album
     return abort("multiple artists in folder".red) unless artist
@@ -53,7 +54,7 @@ class FixedFolder
   end
 
   def proper_directory
-    File.join(artist, album)
+    File.join(artist_folder_name, album.to_ascii)
   end
 
   def fix_directories
@@ -64,11 +65,11 @@ class FixedFolder
   end
 
   def handle_old_folder
-    return if folder_name == artist
-    if File.directory?(artist)
+    return if folder_name == artist_folder_name
+    if File.directory?(artist_folder_name)
       FileUtils.rm_rf(folder_name) # delete old folder if artist folder already exists
     else
-      File.rename(folder_name, artist) # rename old folder if artist folder doesn't exist yet
+      File.rename(folder_name, artist_folder_name) # rename old folder if artist folder doesn't exist yet
     end
   end
 
@@ -77,6 +78,10 @@ class FixedFolder
 
     @artist = tags.artists.uniq.length == 1 && tags.artists[0]
     @album = tags.albums.uniq.length == 1 && tags.albums[0]
+  end
+
+  def artist_folder_name
+    @_artist_folder_name ||= artist.to_ascii
   end
 
   def file_list
