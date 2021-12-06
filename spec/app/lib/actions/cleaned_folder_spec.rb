@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe CleanedFolder do
+RSpec.describe Actions::CleanedFolder do
   around do |example|
     Dir.mktmpdir do |temp_dir|
       Dir.chdir temp_dir do
@@ -32,17 +32,17 @@ RSpec.describe CleanedFolder do
         end
 
         it 'removes .DS_STORE files' do
-          CleanedFolder.new(tested_dir).update!
+          described_class.new(tested_dir).update!
           expect(Dir.entries(tested_dir)).not_to include('.DS_STORE')
         end
 
         it 'removes .dat files' do
-          CleanedFolder.new(tested_dir).update!
+          described_class.new(tested_dir).update!
           expect(Dir.entries(tested_dir)).not_to include('test.dat')
         end
 
         it 'removes thumbs files' do
-          CleanedFolder.new(tested_dir).update!
+          described_class.new(tested_dir).update!
           expect(Dir.entries(tested_dir)).not_to include('Thumbs.db')
         end
 
@@ -53,7 +53,7 @@ RSpec.describe CleanedFolder do
           end
 
           it 'removes them too' do
-            CleanedFolder.new(tested_dir).update!
+            described_class.new(tested_dir).update!
             expect(Dir.entries("#{tested_dir}/subdir")).not_to include('.DS_STORE')
           end
         end
@@ -65,7 +65,7 @@ RSpec.describe CleanedFolder do
         end
 
         it "doesn't remove the files" do
-          CleanedFolder.new(tested_dir).update!
+          described_class.new(tested_dir).update!
           expect(Dir.entries(tested_dir)).to include('.DS_STORE')
         end
       end
@@ -77,7 +77,7 @@ RSpec.describe CleanedFolder do
       end
 
       it 'still works' do
-        CleanedFolder.new(tested_dir).update!
+        described_class.new(tested_dir).update!
         expect(Dir.entries(tested_dir)).to include 'dont_touch_me'
       end
     end

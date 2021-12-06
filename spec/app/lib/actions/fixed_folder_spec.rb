@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe FixedFolder do
+RSpec.describe Actions::FixedFolder do
 
   around do |example|
     Dir.mktmpdir do |temp_dir|
@@ -33,7 +33,7 @@ RSpec.describe FixedFolder do
       context 'changes accepted' do
         before do
           described_class.any_instance.stubs(gets: "y\n")
-          MoveFolders.any_instance.stubs(gets: "y\n")
+          Actions::MoveFolders.any_instance.stubs(gets: "y\n")
         end
 
         context "loose folder" do
@@ -100,7 +100,7 @@ RSpec.describe FixedFolder do
           let(:fixture_path) { 'with_feats' }
 
           before do
-            CleanedFeatures.any_instance.stubs(gets: "y\n")
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
           end
 
           it 'fixes the filesystem' do
@@ -123,7 +123,7 @@ RSpec.describe FixedFolder do
           let(:fixture_path) { 'with_feats_already_added' }
 
           before do
-            CleanedFeatures.any_instance.stubs(gets: "y\n")
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
           end
 
           it 'fixes the filesystem' do
@@ -146,7 +146,7 @@ RSpec.describe FixedFolder do
           let(:fixture_path) { 'with_feats_ampersand' }
 
           before do
-            CleanedFeatures.any_instance.stubs(gets: "y\n")
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
           end
 
           it 'fixes the filesystem' do
@@ -169,7 +169,7 @@ RSpec.describe FixedFolder do
           let(:fixture_path) { 'with_feats_comma' }
 
           before do
-            CleanedFeatures.any_instance.stubs(gets: "y\n")
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
           end
 
           it 'fixes the filesystem' do
