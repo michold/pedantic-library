@@ -205,6 +205,23 @@ RSpec.describe Actions::FixedFolder do
           expect(File.file?(final_dir)).to be false
         end
       end
+
+      context 'ascii changes rejected' do
+        let(:fixture_path) { 'wrong_ascii' }
+
+        before do
+          Actions::MoveFolders.any_instance.stubs(gets: "\n")
+        end
+
+        it 'leaves the filesystem as it was' do
+          org_dir = File.join(@temp_dir, "Mroqly", "Qalbum", "Jesteś Cooler.mp3")
+
+          expect(File.file?(org_dir)).to be true
+          described_class.new("Mroqly").update!
+          expect(File.file?(org_dir)).to be true
+          expect(File.file?(final_dir)).to be false
+        end
+      end
     end
   end
 end
