@@ -42,6 +42,7 @@ class FixedFolder
     message = "aborting update of folder `#{folder_name}`"
     message += " due to #{reason}" if reason
     puts message
+    false
   end
 
   def approved_by_prompt(message)
