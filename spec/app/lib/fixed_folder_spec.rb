@@ -23,7 +23,7 @@ RSpec.describe FixedFolder do
       it 'leaves the filesystem as it was' do
         expect(File.file?(final_dir)).to be true
 
-        described_class.new("Mroqły").update!
+        described_class.new("Mroqly").update!
 
         expect(File.file?(final_dir)).to be true
       end
@@ -57,6 +57,20 @@ RSpec.describe FixedFolder do
 
         context "wrong artist" do
           let(:fixture_path) { 'wrong_artist' }
+
+          it 'fixes the filesystem' do
+            described_class.new("xxx").update!
+
+            expect(File.file?(final_dir)).to be true
+          end
+        end
+
+        context "wrong artist, but folder for the right artist already exists" do
+          let(:fixture_path) { 'wrong_artist' }
+
+          before do
+            Dir.mkdir(File.join(@temp_dir, "Mroqly"))
+          end
 
           it 'fixes the filesystem' do
             described_class.new("xxx").update!
