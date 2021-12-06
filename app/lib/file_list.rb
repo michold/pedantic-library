@@ -1,5 +1,5 @@
 class FileList
-  MUSIC_EXTENSIONS = ['mp3'] # TODO: handle flacs, aac 
+  MUSIC_EXTENSIONS = ['mp3'] # TODO: handle flacs, aac
 
   def initialize(dir)
     @dir = dir

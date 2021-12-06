@@ -15,7 +15,7 @@ RSpec.describe FixedFolder do
   end
 
   describe '#update!' do
-    let(:final_dir) { File.join(@temp_dir, "Mroqly", "Qalbum", "Jesteś Cooler.mp3") }
+    let(:final_dir) { File.join(@temp_dir, "Mroqly", "Qalbum", "Jestes Cooler.mp3") }
 
     context 'all good' do
       let(:fixture_path) { 'ok' }

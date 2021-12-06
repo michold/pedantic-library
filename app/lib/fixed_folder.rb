@@ -60,17 +60,21 @@ class FixedFolder
   def fix_directories
     FileUtils.cp_r(src_path, TEMP_DIR) # copy music to temp
     FileUtils.rm_rf(File.join(folder_name, "."), secure: true) # remove content of old folder
-    handle_old_folder
-    FileUtils.mv(TEMP_DIR, proper_directory) # move temp as new folder's album
+    prepare_new_folder
+    files.each do |file_path|
+      file_name = File.basename(file_path)
+      FileUtils.mv(File.join(TEMP_DIR, file_name), File.join(proper_directory, file_name.to_ascii)) # move temp as new folder's album
+    end
   end
 
-  def handle_old_folder
+  def prepare_new_folder
     return if folder_name == artist_folder_name
     if File.directory?(artist_folder_name)
       FileUtils.rm_rf(folder_name) # delete old folder if artist folder already exists
     else
       File.rename(folder_name, artist_folder_name) # rename old folder if artist folder doesn't exist yet
     end
+    Dir.mkdir(proper_directory)
   end
 
   def find_tags
@@ -78,6 +82,10 @@ class FixedFolder
 
     @artist = tags.artists.uniq.length == 1 && tags.artists[0]
     @album = tags.albums.uniq.length == 1 && tags.albums[0]
+  end
+
+  def album_folder_name
+    @_album_folder_name ||= album.to_ascii
   end
 
   def artist_folder_name
