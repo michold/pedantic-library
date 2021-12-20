@@ -67,11 +67,11 @@ module Actions
     end
 
     def album_folder_name
-      @_album_folder_name ||= album.to_ascii
+      @_album_folder_name ||= album.to_ascii.gsub("/", "_")
     end
 
     def artist_folder_name
-      @_artist_folder_name ||= artist.to_ascii
+      @_artist_folder_name ||= artist.to_ascii.gsub("/", "_")
     end
 
     def file_list
