@@ -9,7 +9,7 @@ class Main
     Dir.chdir cwd
     folders_to_check = FoldersWithMusic.new('./').names
     folders_to_check.each do |folder_name|
-      FixedFolder.new(folder_name).update!
+      Actions::FixedFolder.new(folder_name).update!
     end
   end
 

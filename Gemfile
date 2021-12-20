@@ -7,6 +7,7 @@ gem "colorize"
 
 gem "id3tag"
 gem "taglib-ruby"
+gem "unidecoder"
 
 gem "rspec"
 gem "mocha"

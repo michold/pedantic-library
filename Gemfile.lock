@@ -26,6 +26,7 @@ GEM
       rspec-support (~> 3.7.0)
     rspec-support (3.7.0)
     taglib-ruby (1.1.0)
+    unidecoder (1.1.2)
 
 PLATFORMS
   ruby
@@ -37,6 +38,7 @@ DEPENDENCIES
   pry
   rspec
   taglib-ruby
+  unidecoder
 
 BUNDLED WITH
    1.17.3

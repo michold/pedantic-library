@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe FixedFolder do
+RSpec.describe Actions::FixedFolder do
 
   around do |example|
     Dir.mktmpdir do |temp_dir|
@@ -15,7 +15,7 @@ RSpec.describe FixedFolder do
   end
 
   describe '#update!' do
-    let(:final_dir) { File.join(@temp_dir, "Mroqły", "Qalbum", "Jesteś Cooler.mp3") }
+    let(:final_dir) { File.join(@temp_dir, "Mroqly", "Qalbum", "Jestes Cooler.mp3") }
 
     context 'all good' do
       let(:fixture_path) { 'ok' }
@@ -23,7 +23,7 @@ RSpec.describe FixedFolder do
       it 'leaves the filesystem as it was' do
         expect(File.file?(final_dir)).to be true
 
-        described_class.new("Mroqły").update!
+        described_class.new("Mroqly").update!
 
         expect(File.file?(final_dir)).to be true
       end
@@ -33,6 +33,7 @@ RSpec.describe FixedFolder do
       context 'changes accepted' do
         before do
           described_class.any_instance.stubs(gets: "y\n")
+          Actions::MoveFolders.any_instance.stubs(gets: "y\n")
         end
 
         context "loose folder" do
@@ -42,6 +43,12 @@ RSpec.describe FixedFolder do
             described_class.new("Mroqły").update!
 
             expect(File.file?(final_dir)).to be true
+          end
+
+          it "doesn't leave any leftover folders" do
+            described_class.new("Mroqły").update!
+
+            expect(Dir.glob(File.join(@temp_dir, '*'))).to eq [File.join(@temp_dir, 'Mroqly')]
           end
         end
 
@@ -65,11 +72,35 @@ RSpec.describe FixedFolder do
           end
         end
 
+        context "wrong ascii" do
+          let(:fixture_path) { 'wrong_ascii' }
+
+          it 'fixes the filesystem' do
+            described_class.new("Mroqly").update!
+
+            expect(File.file?(final_dir)).to be true
+          end
+        end
+
+        context "wrong artist, but folder for the right artist already exists" do
+          let(:fixture_path) { 'wrong_artist' }
+
+          before do
+            Dir.mkdir(File.join(@temp_dir, "Mroqly"))
+          end
+
+          it 'fixes the filesystem' do
+            described_class.new("xxx").update!
+
+            expect(File.file?(final_dir)).to be true
+          end
+        end
+
         context "with feats" do
           let(:fixture_path) { 'with_feats' }
 
           before do
-            CleanedFeatures.any_instance.stubs(gets: "y\n")
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
           end
 
           it 'fixes the filesystem' do
@@ -92,7 +123,7 @@ RSpec.describe FixedFolder do
           let(:fixture_path) { 'with_feats_already_added' }
 
           before do
-            CleanedFeatures.any_instance.stubs(gets: "y\n")
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
           end
 
           it 'fixes the filesystem' do
@@ -115,7 +146,7 @@ RSpec.describe FixedFolder do
           let(:fixture_path) { 'with_feats_ampersand' }
 
           before do
-            CleanedFeatures.any_instance.stubs(gets: "y\n")
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
           end
 
           it 'fixes the filesystem' do
@@ -138,7 +169,7 @@ RSpec.describe FixedFolder do
           let(:fixture_path) { 'with_feats_comma' }
 
           before do
-            CleanedFeatures.any_instance.stubs(gets: "y\n")
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
           end
 
           it 'fixes the filesystem' do
@@ -170,6 +201,23 @@ RSpec.describe FixedFolder do
 
           expect(File.file?(org_dir)).to be true
           described_class.new("Mroqły").update!
+          expect(File.file?(org_dir)).to be true
+          expect(File.file?(final_dir)).to be false
+        end
+      end
+
+      context 'ascii changes rejected' do
+        let(:fixture_path) { 'wrong_ascii' }
+
+        before do
+          Actions::MoveFolders.any_instance.stubs(gets: "\n")
+        end
+
+        it 'leaves the filesystem as it was' do
+          org_dir = File.join(@temp_dir, "Mroqly", "Qalbum", "Jesteś Cooler.mp3")
+
+          expect(File.file?(org_dir)).to be true
+          described_class.new("Mroqly").update!
           expect(File.file?(org_dir)).to be true
           expect(File.file?(final_dir)).to be false
         end

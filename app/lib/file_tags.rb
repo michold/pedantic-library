@@ -60,7 +60,7 @@ class FileTags
     @artists = artists.map do |artist|
       next artist unless artist.is_a?(String)
 
-      first_artist = artist.split(CleanedFeatures::FEATURES_SEPARATOR).first
+      first_artist = artist.split(Actions::CleanedFeatures::FEATURES_SEPARATOR).first
       next artist if artist == first_artist
       @artist_has_features = true
 
