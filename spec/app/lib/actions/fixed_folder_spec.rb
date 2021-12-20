@@ -15,7 +15,9 @@ RSpec.describe Actions::FixedFolder do
   end
 
   describe '#update!' do
-    let(:final_dir) { File.join(@temp_dir, "Mroqly", "Qalbum", "Jestes Cooler.mp3") }
+    let(:final_dir) { File.join(@temp_dir, final_dir_artist, final_dir_album, "Jestes Cooler.mp3") }
+    let(:final_dir_artist) { "Mroqly" }
+    let(:final_dir_album) { "Qalbum" }
 
     context 'all good' do
       let(:fixture_path) { 'ok' }
@@ -187,13 +189,81 @@ RSpec.describe Actions::FixedFolder do
             end
           end
         end
+        context "with feats, with comma" do
+          let(:fixture_path) { 'with_feats_comma' }
+
+          before do
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
+          end
+
+          it 'fixes the filesystem' do
+            described_class.new("Mroqły").update!
+
+            expect(File.file?(final_dir)).to be true
+          end
+
+          it 'fixes the tags' do
+            described_class.new("Mroqły").update!
+
+            ID3Tag.read(File.open(final_dir)) do |tag|
+              expect(tag.artist).to eq("Mroqły")
+              expect(tag.title).to eq("Jesteś Cooler (feat. Dora & Zmora)")
+            end
+          end
+        end
+
+        context "artist with slash in the name" do
+          let(:fixture_path) { 'artist_with_slash' }
+          let(:final_dir_artist) { "Mroql_y" }
+
+          before do
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
+          end
+
+          it 'fixes the filesystem' do
+            described_class.new("Mroqły").update!
+
+            expect(File.file?(final_dir)).to be true
+          end
+
+          it "doesn't change the tags" do
+            described_class.new("Mroqły").update!
+
+            ID3Tag.read(File.open(final_dir)) do |tag|
+              expect(tag.artist).to eq("Mroqł/y")
+            end
+          end
+        end
+
+        context "album with slash in the name" do
+          let(:fixture_path) { 'album_with_slash' }
+          let(:final_dir_album) { "Qalbu_m" }
+
+          before do
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
+          end
+
+          it 'fixes the filesystem' do
+            described_class.new("Mroqły").update!
+
+            expect(File.file?(final_dir)).to be true
+          end
+
+          it "doesn't change the tags" do
+            described_class.new("Mroqły").update!
+
+            ID3Tag.read(File.open(final_dir)) do |tag|
+              expect(tag.album).to eq("Qalbu/m")
+            end
+          end
+        end
       end
 
       context 'changes rejected' do
         let(:fixture_path) { 'loose_folder' }
 
         before do
-          described_class.any_instance.stubs(gets: "\n")
+          Actions::MoveFolders.any_instance.stubs(gets: "\n")
         end
 
         it 'leaves the filesystem as it was' do
