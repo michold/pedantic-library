@@ -54,7 +54,7 @@ module Actions
     def move_files_to_new_folder
       files.each do |file_path|
         file_name = File.basename(file_path)
-        new_file_name = file_name.to_ascii
+        new_file_name = file_name.to_ascii.gsub("/", "_")
         if new_file_name != file_name
           new_file_name = file_name unless approved_by_prompt("rename file from `#{file_name}` to `#{new_file_name}`")
         end
@@ -71,7 +71,7 @@ module Actions
     end
 
     def artist_folder_name
-      @_artist_folder_name ||= artist.to_ascii.gsub("/", "_")
+      @_artist_folder_name ||= artist.gsub("/", "_")
     end
 
     def file_list

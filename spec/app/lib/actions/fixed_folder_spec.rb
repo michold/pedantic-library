@@ -16,7 +16,7 @@ RSpec.describe Actions::FixedFolder do
 
   describe '#update!' do
     let(:final_dir) { File.join(@temp_dir, final_dir_artist, final_dir_album, "Jestes Cooler.mp3") }
-    let(:final_dir_artist) { "Mroqly" }
+    let(:final_dir_artist) { "Mroqły" }
     let(:final_dir_album) { "Qalbum" }
 
     context 'all good' do
@@ -25,7 +25,7 @@ RSpec.describe Actions::FixedFolder do
       it 'leaves the filesystem as it was' do
         expect(File.file?(final_dir)).to be true
 
-        described_class.new("Mroqly").update!
+        described_class.new("Mroqły").update!
 
         expect(File.file?(final_dir)).to be true
       end
@@ -50,7 +50,7 @@ RSpec.describe Actions::FixedFolder do
           it "doesn't leave any leftover folders" do
             described_class.new("Mroqły").update!
 
-            expect(Dir.glob(File.join(@temp_dir, '*'))).to eq [File.join(@temp_dir, 'Mroqly')]
+            expect(Dir.glob(File.join(@temp_dir, '*'))).to eq [File.join(@temp_dir, 'Mroqły')]
           end
         end
 
@@ -78,7 +78,7 @@ RSpec.describe Actions::FixedFolder do
           let(:fixture_path) { 'wrong_ascii' }
 
           it 'fixes the filesystem' do
-            described_class.new("Mroqly").update!
+            described_class.new("Mroqły").update!
 
             expect(File.file?(final_dir)).to be true
           end
@@ -88,7 +88,7 @@ RSpec.describe Actions::FixedFolder do
           let(:fixture_path) { 'wrong_artist' }
 
           before do
-            Dir.mkdir(File.join(@temp_dir, "Mroqly"))
+            Dir.mkdir(File.join(@temp_dir, "Mroqły"))
           end
 
           it 'fixes the filesystem' do
@@ -214,7 +214,7 @@ RSpec.describe Actions::FixedFolder do
 
         context "artist with slash in the name" do
           let(:fixture_path) { 'artist_with_slash' }
-          let(:final_dir_artist) { "Mroql_y" }
+          let(:final_dir_artist) { "Mroqł_y" }
 
           before do
             Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
@@ -284,10 +284,10 @@ RSpec.describe Actions::FixedFolder do
         end
 
         it 'leaves the filesystem as it was' do
-          org_dir = File.join(@temp_dir, "Mroqly", "Qalbum", "Jesteś Cooler.mp3")
+          org_dir = File.join(@temp_dir, "Mroqły", "Qalbum", "Jesteś Cooler.mp3")
 
           expect(File.file?(org_dir)).to be true
-          described_class.new("Mroqly").update!
+          described_class.new("Mroqły").update!
           expect(File.file?(org_dir)).to be true
           expect(File.file?(final_dir)).to be false
         end
