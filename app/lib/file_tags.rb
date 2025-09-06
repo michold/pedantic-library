@@ -3,7 +3,6 @@ class FileTags
 
   def initialize(folder_name)
     @folder_name = folder_name
-    # TODO: sometimes artist and album tags are mixed up
     @artists = []
     @artist_has_features = false
     @albums = []

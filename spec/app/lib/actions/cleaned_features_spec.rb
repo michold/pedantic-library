@@ -155,6 +155,7 @@ RSpec.describe Actions::FixedFolder do
 
         context "with double artist" do
           let(:fixture_path) { 'artist_is_a_duo' }
+          let(:final_dir_artist) { "Mroqły & Dora" }
 
           before do
             Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
@@ -183,6 +184,7 @@ RSpec.describe Actions::FixedFolder do
 
         context "all tracks have the same feature" do
           let(:fixture_path) { 'artist_is_a_duo_from_features' }
+          let(:final_dir_artist) { "Mroqły & Dora" }
 
           before do
             Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")

@@ -10,20 +10,25 @@ module Actions
     end
 
     def update!
-      common_artists = get_common_artists
-      common_artists_string = features_string(common_artists)
-
       tags.files.each do |file|
         artist = file.fetch(:artist)
         artists = artist.split(FEATURES_SEPARATOR)
 
-        add_features_to_title(file.fetch(:artist), artists, common_artists, common_artists_string, file.fetch(:title), file.fetch(:file_path))
+        add_features_to_title(file.fetch(:artist), artists, common_artists_string, file.fetch(:title), file.fetch(:file_path))
       end
+    end
+
+    def common_artists_string
+      @_common_artists_string ||= stringify_artists(common_artists)
     end
 
     private
 
     attr_reader :folder_name, :tags
+
+    def common_artists
+      @_common_artists ||= get_common_artists
+    end
 
     def get_common_artists
       # if it's just one file, assume only first tagged artist matters
@@ -35,18 +40,16 @@ module Actions
         [file, artists.uniq]
       end
 
-      artist_map.values.inject(&:&)
+      artist_map.values.inject(&:&) || []
     end
 
-    def add_features_to_title(org_artists_string, org_artists, common_artists, common_artists_string, org_title, file_path)
-      ID3Tag.read(File.open(file_path)) do |tag|
-        new_title = get_new_title(org_title, org_artists, common_artists)
-        return if new_title == org_title && common_artists == org_artists
+    def add_features_to_title(org_artists_string, org_artists, common_artists_string, org_title, file_path)
+      new_title = get_new_title(org_title, org_artists)
+      return if new_title == org_title && common_artists == org_artists
 
-        return unless approved_by_prompt("change `#{org_title}` by `#{org_artists_string}` to `#{new_title}` by `#{common_artists_string}`")
+      return unless approved_by_prompt("change `#{org_title}` by `#{org_artists_string}` to `#{new_title}` by `#{common_artists_string}`")
 
-        update_file(file_path, common_artists_string, new_title)
-      end
+      update_file(file_path, common_artists_string, new_title)
     end
 
     def update_file(file_path, artist, title)
@@ -58,15 +61,15 @@ module Actions
       end
     end
 
-    def get_new_title(org_title, artists, common_artists)
+    def get_new_title(org_title, org_artists)
       title_matches = org_title.match(/(.*)\s\(feat\.\s(.*)\)/)
       title_features = get_title_features(org_title)
-      featured_artists = (artists | title_features) - common_artists
+      featured_artists = (org_artists | title_features) - common_artists
       new_base_title = title_matches ? title_matches[1] : org_title
 
       return new_base_title if featured_artists.empty?
 
-      "#{new_base_title} (feat. #{features_string(featured_artists)})"
+      "#{new_base_title} (feat. #{stringify_artists(featured_artists)})"
     end
 
     def get_title_features(title)
@@ -74,8 +77,8 @@ module Actions
       title_matches ? title_matches[2].split(/\s\&\s|,\s/) : []
     end
 
-    def features_string(features)
-      result = features.join(", ")
+    def stringify_artists(artists)
+      result = artists.join(", ")
       result = result.sub(/.*\K,\ /, ' & ')
       result
     end
