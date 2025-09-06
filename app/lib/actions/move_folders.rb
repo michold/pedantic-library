@@ -13,7 +13,7 @@ module Actions
     def update!
       return abort("files are sorted properly".green) if same_path? && filepaths_are_only_ascii?
 
-      return abort if !same_path? && !approved_by_prompt("move files from `#{folder_name}` to `#{destination_directory}`")
+      return abort if !same_path? && !Cli::Approval.get("move files from `#{folder_name}` to `#{destination_directory}`")
 
       puts "moving files to `#{destination_directory}`..." if same_path? # tell the user which album we're working on if they don't know yet
 
@@ -56,7 +56,7 @@ module Actions
         file_name = File.basename(file_path)
         new_file_name = mapped_file_name(file_name)
         if new_file_name != file_name
-          new_file_name = file_name unless approved_by_prompt("rename file from `#{file_name}` to `#{new_file_name}`")
+          new_file_name = file_name unless Cli::Approval.get("rename file from `#{file_name}` to `#{new_file_name}`")
         end
         FileUtils.mv(File.join(TEMP_DIR, file_name), File.join(destination_directory, new_file_name)) # move temp as new folder's album
       end
@@ -102,12 +102,6 @@ module Actions
       message = "aborting update of folder `#{folder_name}`"
       message += " due to #{reason}" if reason
       puts message
-    end
-
-    def approved_by_prompt(message)
-      puts "This script will #{message}"
-      puts "Do you want to continue? (y/n)"
-      gets.chomp == "y"
     end
 
     def filepaths_are_only_ascii?
