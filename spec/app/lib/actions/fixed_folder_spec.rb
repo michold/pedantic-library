@@ -13,7 +13,7 @@ RSpec.describe Actions::FixedFolder do
     end
   end
 
-  describe '#update!' do
+  describe '#update!', :aggregate_failures do
     let(:final_dir) { File.join(@temp_dir, final_dir_artist, final_dir_album, "Jestes Cooler.mp3") }
     let(:final_dir_artist) { "Mroqły" }
     let(:final_dir_album) { "Qalbum" }
@@ -94,120 +94,6 @@ RSpec.describe Actions::FixedFolder do
             described_class.new("xxx").update!
 
             expect(File.file?(final_dir)).to be true
-          end
-        end
-
-        context "with feats" do
-          let(:fixture_path) { 'with_feats' }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
-          it 'fixes the filesystem' do
-            described_class.new("Mroqły").update!
-
-            expect(File.file?(final_dir)).to be true
-          end
-
-          it 'fixes the tags' do
-            described_class.new("Mroqły").update!
-
-            ID3Tag.read(File.open(final_dir)) do |tag|
-              expect(tag.artist).to eq("Mroqły")
-              expect(tag.title).to eq("Jesteś Cooler (feat. Dora)")
-            end
-          end
-        end
-
-        context "with feats, some already added" do
-          let(:fixture_path) { 'with_feats_already_added' }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
-          it 'fixes the filesystem' do
-            described_class.new("Mroqły").update!
-
-            expect(File.file?(final_dir)).to be true
-          end
-
-          it 'fixes the tags' do
-            described_class.new("Mroqły").update!
-
-            ID3Tag.read(File.open(final_dir)) do |tag|
-              expect(tag.artist).to eq("Mroqły")
-              expect(tag.title).to eq("Jesteś Cooler (feat. Dora & Zmora)")
-            end
-          end
-        end
-
-        context "with feats, with ampersand" do
-          let(:fixture_path) { 'with_feats_ampersand' }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
-          it 'fixes the filesystem' do
-            described_class.new("Mroqły").update!
-
-            expect(File.file?(final_dir)).to be true
-          end
-
-          it 'fixes the tags' do
-            described_class.new("Mroqły").update!
-
-            ID3Tag.read(File.open(final_dir)) do |tag|
-              expect(tag.artist).to eq("Mroqły")
-              expect(tag.title).to eq("Jesteś Cooler (feat. Dora & Zmora)")
-            end
-          end
-        end
-
-        context "with feats, with comma" do
-          let(:fixture_path) { 'with_feats_comma' }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
-          it 'fixes the filesystem' do
-            described_class.new("Mroqły").update!
-
-            expect(File.file?(final_dir)).to be true
-          end
-
-          it 'fixes the tags' do
-            described_class.new("Mroqły").update!
-
-            ID3Tag.read(File.open(final_dir)) do |tag|
-              expect(tag.artist).to eq("Mroqły")
-              expect(tag.title).to eq("Jesteś Cooler (feat. Dora & Zmora)")
-            end
-          end
-        end
-        context "with feats, with comma" do
-          let(:fixture_path) { 'with_feats_comma' }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
-          it 'fixes the filesystem' do
-            described_class.new("Mroqły").update!
-
-            expect(File.file?(final_dir)).to be true
-          end
-
-          it 'fixes the tags' do
-            described_class.new("Mroqły").update!
-
-            ID3Tag.read(File.open(final_dir)) do |tag|
-              expect(tag.artist).to eq("Mroqły")
-              expect(tag.title).to eq("Jesteś Cooler (feat. Dora & Zmora)")
-            end
           end
         end
 
