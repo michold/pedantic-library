@@ -52,12 +52,25 @@ module Actions
     end
 
     def move_files_to_new_folder
-      files.each do |file_path|
+      new_file_names_msg = ''
+
+      file_names = files.map do |file_path|
         file_name = File.basename(file_path)
         new_file_name = mapped_file_name(file_name)
         if new_file_name != file_name
-          new_file_name = file_name unless Cli::Approval.get("rename file from `#{file_name}` to `#{new_file_name}`")
+          new_file_names_msg += "\n  from `#{file_name}` to `#{new_file_name}`"
         end
+        file_name
+      end
+
+      if new_file_names_msg != ''
+        use_new_file_names = Cli::Approval.get("rename files:#{new_file_names_msg}")
+      else
+        use_new_file_names = false
+      end
+
+      file_names.each do |file_name|
+        new_file_name = use_new_file_names ? mapped_file_name(file_name) : file_name
         FileUtils.mv(File.join(TEMP_DIR, file_name), File.join(destination_directory, new_file_name)) # move temp as new folder's album
       end
     end
