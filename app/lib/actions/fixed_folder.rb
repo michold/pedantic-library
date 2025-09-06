@@ -8,6 +8,7 @@ module Actions
 
     def update!
       puts "." * 50
+      # TODO: cleaned features artist should be detected in `find_tags`
       find_tags
 
       Actions::CleanedFolder.new(folder_name).update!
