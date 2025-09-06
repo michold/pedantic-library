@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 RSpec.describe Actions::FixedFolder do
-
   around do |example|
     Dir.mktmpdir do |temp_dir|
       Dir.chdir temp_dir do
@@ -254,6 +253,29 @@ RSpec.describe Actions::FixedFolder do
 
             ID3Tag.read(File.open(final_dir)) do |tag|
               expect(tag.album).to eq("Qalbu/m")
+            end
+          end
+        end
+
+        context "artist is two dots" do
+          let(:fixture_path) { 'album_is_dots' }
+          let(:final_dir_album) { "_" }
+
+          before do
+            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
+          end
+
+          it 'fixes the filesystem' do
+            described_class.new("Mroqły").update!
+
+            expect(File.file?(final_dir)).to be true
+          end
+
+          it "doesn't change the tags" do
+            described_class.new("Mroqły").update!
+
+            ID3Tag.read(File.open(final_dir)) do |tag|
+              expect(tag.album).to eq("..")
             end
           end
         end
