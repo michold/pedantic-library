@@ -14,7 +14,7 @@ module Actions
 
     def update!
       return if files_to_remove.empty?
-      return abort unless approved_by_prompt
+      return abort unless Cli::Approval.get(prompt_message)
       files_to_remove.each { |file| File.delete(file) }
     end
 
@@ -22,12 +22,8 @@ module Actions
 
     attr_reader :folder_name
 
-    def approved_by_prompt
-      puts "This script will remove the following files:"
-      puts files_to_remove
-      puts "From #{folder_name} directory."
-      puts "Do you want to continue? (y/n)"
-      gets.chomp == "y"
+    def prompt_message
+      "remove the following files:\n #{files_to_remove}\n From #{folder_name} directory."
     end
 
     def abort

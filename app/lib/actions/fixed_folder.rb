@@ -43,13 +43,6 @@ module Actions
       false
     end
 
-    def approved_by_prompt(message)
-      # TODO: make it a separate class
-      puts "This script will #{message}"
-      puts "Do you want to continue? (y/n)"
-      gets.chomp == "y"
-    end
-
     def find_tags
       @tags = FileTags.new(folder_name)
 

@@ -33,8 +33,7 @@ RSpec.describe Actions::FixedFolder do
     context 'changes required' do
       context 'changes accepted' do
         before do
-          described_class.any_instance.stubs(gets: "y\n")
-          Actions::MoveFolders.any_instance.stubs(gets: "y\n")
+          Cli::Approval.stubs(gets: "y\n")
         end
 
         context "loose folder" do
@@ -101,10 +100,6 @@ RSpec.describe Actions::FixedFolder do
           let(:fixture_path) { 'artist_with_slash' }
           let(:final_dir_artist) { "Mroqł_y" }
 
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!
 
@@ -124,10 +119,6 @@ RSpec.describe Actions::FixedFolder do
           let(:fixture_path) { 'album_with_slash' }
           let(:final_dir_album) { "Qalbu_m" }
 
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!
 
@@ -146,10 +137,6 @@ RSpec.describe Actions::FixedFolder do
         context "artist is two dots" do
           let(:fixture_path) { 'album_is_dots' }
           let(:final_dir_album) { "_" }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
 
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!
@@ -171,7 +158,7 @@ RSpec.describe Actions::FixedFolder do
         let(:fixture_path) { 'loose_folder' }
 
         before do
-          Actions::MoveFolders.any_instance.stubs(gets: "\n")
+          Cli::Approval.stubs(gets: "n\n")
         end
 
         it 'leaves the filesystem as it was' do
@@ -188,7 +175,7 @@ RSpec.describe Actions::FixedFolder do
         let(:fixture_path) { 'wrong_ascii' }
 
         before do
-          Actions::MoveFolders.any_instance.stubs(gets: "\n")
+          Cli::Approval.stubs(gets: "n\n")
         end
 
         it 'leaves the filesystem as it was' do

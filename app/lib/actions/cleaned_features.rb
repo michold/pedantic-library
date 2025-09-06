@@ -47,7 +47,7 @@ module Actions
       new_title = get_new_title(org_title, org_artists)
       return if new_title == org_title && common_artists == org_artists
 
-      return unless approved_by_prompt("change `#{org_title}` by `#{org_artists_string}` to `#{new_title}` by `#{common_artists_string}`")
+      return unless Cli::Approval.get("change `#{org_title}` by `#{org_artists_string}` to `#{new_title}` by `#{common_artists_string}`")
 
       update_file(file_path, common_artists_string, new_title)
     end
@@ -81,12 +81,6 @@ module Actions
       result = artists.join(", ")
       result = result.sub(/.*\K,\ /, ' & ')
       result
-    end
-
-    def approved_by_prompt(message)
-      puts "This script will #{message}"
-      puts "Do you want to continue? (y/n)"
-      gets.chomp == "y"
     end
   end
 end

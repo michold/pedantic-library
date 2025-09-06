@@ -34,16 +34,11 @@ RSpec.describe Actions::FixedFolder do
     context 'changes required' do
       context 'changes accepted' do
         before do
-          described_class.any_instance.stubs(gets: "y\n")
-          Actions::MoveFolders.any_instance.stubs(gets: "y\n")
+          Cli::Approval.stubs(gets: "y\n")
         end
 
         context "with feats" do
           let(:fixture_path) { 'with_feats' }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
 
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!
@@ -64,10 +59,6 @@ RSpec.describe Actions::FixedFolder do
         context "with feats, some already added" do
           let(:fixture_path) { 'with_feats_already_added' }
 
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!
 
@@ -87,10 +78,6 @@ RSpec.describe Actions::FixedFolder do
         context "with feats, with ampersand" do
           let(:fixture_path) { 'with_feats_ampersand' }
 
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!
 
@@ -110,10 +97,6 @@ RSpec.describe Actions::FixedFolder do
         context "with feats, with comma" do
           let(:fixture_path) { 'with_feats_comma' }
 
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
-
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!
 
@@ -132,10 +115,6 @@ RSpec.describe Actions::FixedFolder do
 
         context "with feats, with comma" do
           let(:fixture_path) { 'with_feats_comma' }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
 
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!
@@ -156,10 +135,6 @@ RSpec.describe Actions::FixedFolder do
         context "with double artist" do
           let(:fixture_path) { 'artist_is_a_duo' }
           let(:final_dir_artist) { "Mroqły & Dora" }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
 
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!
@@ -185,10 +160,6 @@ RSpec.describe Actions::FixedFolder do
         context "all tracks have the same feature" do
           let(:fixture_path) { 'artist_is_a_duo_from_features' }
           let(:final_dir_artist) { "Mroqły & Dora" }
-
-          before do
-            Actions::CleanedFeatures.any_instance.stubs(gets: "y\n")
-          end
 
           it 'fixes the filesystem' do
             described_class.new("Mroqły").update!

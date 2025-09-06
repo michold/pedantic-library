@@ -28,7 +28,7 @@ RSpec.describe Actions::CleanedFolder do
 
       context 'remove accepted' do
         before do
-          described_class.any_instance.stubs(gets: "y\n")
+          Cli::Approval.stubs(gets: "y\n")
         end
 
         it 'removes .DS_STORE files' do
@@ -61,7 +61,7 @@ RSpec.describe Actions::CleanedFolder do
 
       context 'remove declined' do
         before do
-          described_class.any_instance.stubs(gets: "\n")
+          Cli::Approval.stubs(gets: "\n")
         end
 
         it "doesn't remove the files" do
