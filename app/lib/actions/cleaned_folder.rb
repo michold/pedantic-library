@@ -3,7 +3,6 @@
 module Actions
   class CleanedFolder
     TO_REMOVE = [
-      '.DS_STORE',
       '*.dat',
       'Thumbs.db'
     ].freeze
