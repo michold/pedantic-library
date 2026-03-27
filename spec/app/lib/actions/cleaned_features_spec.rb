@@ -14,8 +14,8 @@ RSpec.describe Actions::FixedFolder do
   end
 
   describe '#update!', :aggregate_failures do
-    let(:final_dir) { File.join(@temp_dir, final_dir_artist, final_dir_album, "Jestes Cooler.mp3") }
-    let(:final_dir2) { File.join(@temp_dir, final_dir_artist, final_dir_album, "Jestes Cooler2.mp3") }
+    let(:final_dir) { File.join(@temp_dir, final_dir_artist, final_dir_album, "Jesteś Cooler.mp3") }
+    let(:final_dir2) { File.join(@temp_dir, final_dir_artist, final_dir_album, "Jesteś Cooler2.mp3") }
     let(:final_dir_artist) { "Mroqły" }
     let(:final_dir_album) { "Qalbum" }
 

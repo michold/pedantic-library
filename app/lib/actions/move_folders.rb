@@ -11,7 +11,7 @@ module Actions
     end
 
     def update!
-      return abort("files are sorted properly".green) if same_path? && filepaths_are_only_ascii?
+      return abort("files are sorted properly".green) if same_path?
 
       return abort if !same_path? && !Cli::Approval.get("move files from `#{folder_name}` to `#{destination_directory}`")
 
@@ -84,13 +84,12 @@ module Actions
     end
 
     def artist_folder_name
-      @_artist_folder_name ||= mapped_file_name(artist, ascii: false)
+      @_artist_folder_name ||= mapped_file_name(artist)
     end
 
-    def mapped_file_name(name, ascii: true)
+    def mapped_file_name(name)
       return '_' if ['.', ',', '..'].include?(name)
 
-      name = name.to_ascii if ascii
       name.gsub("/", "_")
     end
 
@@ -115,10 +114,6 @@ module Actions
       message = "aborting update of folder `#{folder_name}`"
       message += " due to #{reason}" if reason
       puts message
-    end
-
-    def filepaths_are_only_ascii?
-      files.map(&:to_ascii) == files
     end
 
     def same_path?

@@ -35,8 +35,8 @@ module Actions
       return [tags.files.first.fetch(:artist).split(FEATURES_SEPARATOR).first] if tags.files.count == 1
 
       artist_map = tags.files.to_h do |file|
-        artist = file.fetch(:artist)
-        artists = artist.split(FEATURES_SEPARATOR) + get_title_features(file.fetch(:title))
+        artist = file.fetch(:artist) || ""
+        artists = artist.split(FEATURES_SEPARATOR) + get_title_features(file.fetch(:title) || "")
         [file, artists.uniq]
       end
 

@@ -14,7 +14,7 @@ RSpec.describe Actions::FixedFolder do
   end
 
   describe '#update!', :aggregate_failures do
-    let(:final_dir) { File.join(@temp_dir, final_dir_artist, final_dir_album, "Jestes Cooler.mp3") }
+    let(:final_dir) { File.join(@temp_dir, final_dir_artist, final_dir_album, "Jesteś Cooler.mp3") }
     let(:final_dir_artist) { "Mroqły" }
     let(:final_dir_album) { "Qalbum" }
 
@@ -67,16 +67,6 @@ RSpec.describe Actions::FixedFolder do
 
           it 'fixes the filesystem' do
             described_class.new("xxx").update!
-
-            expect(File.file?(final_dir)).to be true
-          end
-        end
-
-        context "wrong ascii" do
-          let(:fixture_path) { 'wrong_ascii' }
-
-          it 'fixes the filesystem' do
-            described_class.new("Mroqły").update!
 
             expect(File.file?(final_dir)).to be true
           end
@@ -163,23 +153,6 @@ RSpec.describe Actions::FixedFolder do
 
         it 'leaves the filesystem as it was' do
           org_dir = File.join(@temp_dir, "Mroqły", "Jesteś Cooler.mp3")
-
-          expect(File.file?(org_dir)).to be true
-          described_class.new("Mroqły").update!
-          expect(File.file?(org_dir)).to be true
-          expect(File.file?(final_dir)).to be false
-        end
-      end
-
-      context 'ascii changes rejected' do
-        let(:fixture_path) { 'wrong_ascii' }
-
-        before do
-          Cli::Approval.stubs(gets: "n\n")
-        end
-
-        it 'leaves the filesystem as it was' do
-          org_dir = File.join(@temp_dir, "Mroqły", "Qalbum", "Jesteś Cooler.mp3")
 
           expect(File.file?(org_dir)).to be true
           described_class.new("Mroqły").update!
